@@ -11,7 +11,7 @@ import org.mockito.*;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class RentACatTest {
-
+	// Adding a line as a test
 	/**
 	 * The test fixture for this JUnit test. Test fixture: a fixed state of a set of
 	 * objects used as a baseline for running tests. The test fixture is initialized
@@ -37,12 +37,24 @@ public class RentACatTest {
 
 		// 2. Create an unrented Cat with ID 1 and name "Jennyanydots", assign to c1
 		// TODO: Fill in
+		c1 = Mockito.mock(Cat.class);
+		Mockito.when(c1.getId()).thenReturn(1);
+		Mockito.when(c1.getName()).thenReturn("Jennyanydots");
+		
 
 		// 3. Create an unrented Cat with ID 2 and name "Old Deuteronomy", assign to c2
 		// TODO: Fill in
+		c2 = Mockito.mock(Cat.class);
+		Mockito.when(c2.getId()).thenReturn(2);
+		Mockito.when(c2.getName()).thenReturn("Old Deuteronomy");
+
 
 		// 4. Create an unrented Cat with ID 3 and name "Mistoffelees", assign to c3
 		// TODO: Fill in
+		c3 = Mockito.mock(Cat.class);
+		Mockito.when(c3.getId()).thenReturn(3);
+		Mockito.when(c3.getName()).thenReturn("Mistoffelees");
+
 	}
 
 	@After
@@ -67,7 +79,8 @@ public class RentACatTest {
 
 	@Test
 	public void testGetCatNullNumCats0() {
-		// TODO
+		Cat c = r.getCat(2);
+		assertNull("Cat should be null", c);
 	}
 
 	/**
@@ -84,6 +97,12 @@ public class RentACatTest {
 	@Test
 	public void testGetCatNumCats3() {
 		// TODO
+		r.addCat(c1);
+		r.addCat(c2);
+		r.addCat(c3);
+		Cat c = r.getCat(2);
+		assertNotNull("Cat should not be null", c);
+		assertEquals("Cat should hage Id 2", 2, c.getId());
 	}
 
 	/**
@@ -98,7 +117,8 @@ public class RentACatTest {
 
 	@Test
 	public void testCatAvailableFalseNumCats0() {
-		// TODO
+		boolean available = r.catAvailable(2);
+		assertEquals("Cat 2 should not be available", available, false);
 	}
 
 	/**
@@ -115,7 +135,12 @@ public class RentACatTest {
 
 	@Test
 	public void testCatAvailableTrueNumCats3() {
-		// TODO
+		r.addCat(c1);
+		r.addCat(c2);
+		r.addCat(c3);
+		r.rentCat(3);
+		boolean available = r.catAvailable(2);
+		assertEquals("Cat 2 should be available", available, true);
 	}
 
 	/**
@@ -132,7 +157,12 @@ public class RentACatTest {
 
 	@Test
 	public void testCatAvailableFalseNumCats3() {
-		// TODO
+		r.addCat(c1);
+		r.addCat(c2);
+		r.addCat(c3);
+		Mockito.when(c2.getRented()).thenReturn(true);
+		boolean available = r.catAvailable(2);
+		assertEquals("Cat 2 should not be available", available, false);
 	}
 
 	/**
@@ -147,7 +177,8 @@ public class RentACatTest {
 
 	@Test
 	public void testCatExistsFalseNumCats0() {
-		// TODO
+		boolean exists = r.catExists(2);
+		assertEquals("Cat 2 should not exist", exists, false);
 	}
 
 	/**
@@ -162,7 +193,11 @@ public class RentACatTest {
 
 	@Test
 	public void testCatExistsTrueNumCats3() {
-		// TODO
+		r.addCat(c1);
+		r.addCat(c2);
+		r.addCat(c3);
+		boolean exists = r.catExists(2);
+		assertEquals("Cat 2 should exist", exists, true);
 	}
 
 	/**
@@ -177,7 +212,9 @@ public class RentACatTest {
 
 	@Test
 	public void testListCatsNumCats0() {
-		// TODO
+		String expected = "";
+		String observed = r.listCats();
+		assertEquals(expected, observed);
 	}
 
 	/**
@@ -193,7 +230,13 @@ public class RentACatTest {
 
 	@Test
 	public void testListCatsNumCats3() {
-		// TODO
+		r.addCat(c1);
+		r.addCat(c2);
+		r.addCat(c3);
+		String expected = "ID 1. Jennyanydots\nID 2. Old Deuteronomy\nID 3. Mistoffelees\n";
+		String observed = r.listCats();
+		assertEquals(expected, observed);
+
 	}
 
 	/**
@@ -208,7 +251,8 @@ public class RentACatTest {
 
 	@Test
 	public void testRentCatFailureNumCats0() {
-		// TODO
+		boolean returned = r.rentCat(2);
+		assertEquals(false, returned);
 	}
 
 	/**
@@ -229,7 +273,21 @@ public class RentACatTest {
 
 	@Test
 	public void testRentCatFailureNumCats3() {
-		// TODO
+		// Preconditions
+		r.addCat(c1);
+		r.addCat(c2);
+		r.addCat(c3);
+
+		Mockito.when(c2.getRented()).thenReturn(true);
+
+		// Execution steps
+		boolean rented = r.rentCat(2);
+		// Postconditions
+		assertEquals("Cat 2 should already be rented",rented, false);
+		Mockito.verify(c1, Mockito.times(0)).rentCat();
+		Mockito.verify(c2, Mockito.times(0)).rentCat();
+		Mockito.verify(c3, Mockito.times(0)).rentCat();
+
 	}
 
 	/**
@@ -244,7 +302,8 @@ public class RentACatTest {
 
 	@Test
 	public void testReturnCatFailureNumCats0() {
-		// TODO
+		boolean returned = r.returnCat(2);
+		assertEquals(false, returned);
 	}
 
 	/**
@@ -266,6 +325,19 @@ public class RentACatTest {
 
 	@Test
 	public void testReturnCatNumCats3() {
-		// TODO
+		r.addCat(c1);
+		r.addCat(c2);
+		r.addCat(c3);
+
+		r.rentCat(2);
+		Mockito.when(c2.getRented()).thenReturn(true);
+		
+		boolean returned = r.returnCat(2);
+
+		assertEquals(true, returned);
+		
+		Mockito.verify(c2).returnCat();
+		Mockito.verify(c1, Mockito.times(0)).returnCat();
+		Mockito.verify(c3, Mockito.times(0)).returnCat();
 	}
 }
